@@ -9,7 +9,11 @@ async function postForm(e){
 
     const form = new FormData(document.getElementById("checksform"));
 
-    const response = fetch(API_URL, {
+    for (let entry of form.entries()) {
+        console.log(entry);
+    }
+
+    const response = await fetch(API_URL, {
         method: "POST",
         headers: {
                     "Authorization": API_KEY,
@@ -47,7 +51,7 @@ function displayErrors(data){
     }
 
     document.getElementById("resultsModalTitle").innerText = heading;
-    document.getElementById("results-content").innerHTML = heading;
+    document.getElementById("results-content").innerHTML = results;
     resultsModal.show();
 
     }

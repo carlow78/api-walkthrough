@@ -9,7 +9,7 @@ function processOptions(form){
 
     let optArray = [];
 
-    for (let entry of form.entrues()){
+    for (let entry of form.entries()){
         if (entry[0] === "options"){
             optArray.push(entry[1]);
         }
@@ -48,28 +48,6 @@ async function postForm(e){
 
 }
 
-function displayErrors(data){
-
-    let heading = `JSHint Results for ${data.file}`;
-
-    if (data.total_errors === 0){
-
-        results = `<div class = "no_errors">No errors reported!</div>`;
-    }else {
-        results = `<div>Total Errors: <span class="error_count">${data.total_errors}</span>`
-        for (let error of data.error_list) {
-            results += `<div>At line <span class="line">${error.line}</span>, `;
-            results += `column <span class="column">${error.col}</span></div>`;
-            results += `<div class="error">${error.error}</div>`;
-        }
-
-    }
-
-    document.getElementById("resultsModalTitle").innerText = heading;
-    document.getElementById("results-content").innerHTML = results;
-    resultsModal.show();
-
-    }
 
 
 async function getStatus(e) {
@@ -81,35 +59,66 @@ async function getStatus(e) {
     const data = await response.json();
 
     if (response.ok){
-        console.log(data.expiry);
+        displayErrors(data);
     }else{
-        displayException(data);
+    
         throw new Error(data.error);
     }
 
-function displayStatus(data) {
+}
 
-    let heading = "API Key Status";
-    let results = `<div>Your key is valid until</div>`;
-    results += `<div class="key-status">${data.expiry}</div>`;
+function displayErrors(data) {
+
+    let results = "";
+
+
+    let heading = `JSHint Results for ${data.file}`;
+
+    if (data.total_errors === 0) {
+
+        results = `<div class="no_errors">No errors reported!</div>`;
+
+    } else {
+
+        results = `<div>Total Errors: <span class="error_count">${data.total_errors}</span></div>`;
+
+        for (let error of data.error_list) {
+
+            results += `<div>At line <span class="line">${error.line}</span>, `;
+
+            results += `column <span class="column">${error.col}:</span></div>`;
+
+            results += `<div class="error">${error.error}</div>`;
+
+        }
+
+    }
+
+
 
     document.getElementById("resultsModalTitle").innerText = heading;
+
     document.getElementById("results-content").innerHTML = results;
 
     resultsModal.show();
-}
 
 }
 
-function displayException(data){
-    let heading = `An Exception Occurred`;
+function displayStatus(data) {
 
-    results = `<div>The API returned code ${data.status_code}</div>`
-    results += `<div>Error number: <strong>${data.error_no}</strong>`;
-    results += `<div>Error text: <strong>${data.error}</strong>`;
+
+
+    let heading = "API Key Status";
+
+    let results = `<div>Your key is valid until</div>`;
+
+    results += `<div class="key-status">${data.expiry}</div>`;
+
+
 
     document.getElementById("resultsModalTitle").innerText = heading;
+
     document.getElementById("results-content").innerHTML = results;
 
-
+    resultsModal.show();
 }
